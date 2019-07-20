@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-<form>
+<form id="form">
   <div class="form-group row">
     <label for="titleAdd" class="col-sm-2 col-form-label">Название</label>
     <div class="col-sm-10">
@@ -62,7 +62,7 @@
 
   <div class="form-group row">
     <div class="col-sm-10">
-      <button type="submit" class="btn btn-primary">Отправить</button>
+      <button type="submit" class="btn btn-primary" id="send">Отправить</button>
     </div>
   </div>
 </form>
@@ -81,7 +81,8 @@
     "point": {
       "type": "Point",
       "coordinates": [0, 0]
-    }
+    },
+    "text": ""
   }  
 
   let mymap = L.map('mapAdd').setView([51.505, -0.09], 13);
@@ -135,7 +136,7 @@
   });
 
 
-  let textbox = document.getElementById("addressAdd").onfocusout = function() {
+  document.getElementById("addressAdd").onfocusout = function() {
     text = $("#addressAdd")[0].value;
     $.get(
       "https://geocode-maps.yandex.ru/1.x/?format=json&apikey="+"{{yandex_geocoder_key}}"+"&geocode="+text,
@@ -166,12 +167,14 @@
     );
   };
 
-  function setAddress(lat, lng){
-
-  }
-
-  function setMarker(address){
-
+  document.getElementById("form").onsubmit = function() {
+    post_object.description = $("#titleAdd")[0].value;
+    post_object.type = $("#categoryAdd")[0].value;
+    post_object.begin = Math.floor(new Date($("#beginDate")[0].value).getTime()/1000.0);
+    post_object.end = Math.floor(new Date($("#endDate"[0]).value).getTime()/1000.0);
+    post_object.text = $("#contactInfo")[0].value;
+    console.log(post_object);
+    alert(post_object);
   }
 
   function setMapHeight(mapid){
