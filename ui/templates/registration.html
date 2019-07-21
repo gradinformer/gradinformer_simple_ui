@@ -35,14 +35,18 @@
               "email": email,
               "password": password
             }
-
+            
             $.post({
               url: endpoint,
-              data: data_body,
+              contentType: "application/json; charset=utf-8",
+              data: JSON.stringify(data_body).toString(),
               success: function(data){
-                console.log(data);
-              }
+                //На ваш почтовый адрес отправлено письмо с подтверждением
+                alert("На ваш почтовый адрес отправлено письмо для подтверждения.")
+              },
+              fail: function(xhr, status,error) { alert("Ошибка выполнения")},
             })
+            
 
             return false;
          });
