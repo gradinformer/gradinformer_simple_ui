@@ -44,10 +44,11 @@
                 //На ваш почтовый адрес отправлено письмо с подтверждением
                 alert("На ваш почтовый адрес отправлено письмо для подтверждения.")
               },
-              fail: function(xhr, status,error) { alert("Ошибка выполнения")},
+              fail: function(xhr, status,error) { 
+                alert(status)
+              },
             })
             
-
             return false;
          });
       </script>

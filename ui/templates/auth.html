@@ -2,14 +2,49 @@
 {% load static %}
 
 {% block content %}
-      <form class="reg_form">
+      <form class="auth_form" id="auth_form">
         <h4> Вход на сайт Градинформер </h4>
         <div class="form-group">
           <input type="text" class="form-control" id="loginInput" placeholder="Логин или email">
         </div>
         <div class="form-group">
-          <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Пароль">
+          <input type="password" class="form-control" id="passwordInput" placeholder="Пароль">
         </div>
         <button type="submit" class="btn btn-primary">Войти</button>
       </form>
+
+      <script type="text/javascript">
+
+        let endpoint = "http://85.143.221.107:1337/api/login";
+
+        $("#auth_form").submit(function(e) {
+            e.preventDefault();
+
+            // do something
+            let login = $("#loginInput").val();
+            let password = $("#passwordInput").val();
+
+            let data_body =  {
+              "login": login,
+              "password": password
+            }
+            
+            $.post({
+              url: endpoint,
+              contentType: "application/json; charset=utf-8",
+              data: JSON.stringify(data_body).toString(),
+              success: function(data){
+                setCookie('api_key', data.api_key);
+                document.location.href = "http://localhost:8000/";
+              
+              },
+              fail: function(xhr, status,error) { alert("Ошибка выполнения")},
+            })
+            
+
+            
+
+            return false;
+         });
+      </script>
 {% endblock content %}
