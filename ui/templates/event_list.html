@@ -5,66 +5,166 @@
 	<div class="input-group mb-3 searchstring" style="padding-top: 15px;">
         <input type="text" class="form-control" placeholder="Поиск по описанию" aria-label="Имя получателя" aria-describedby="basic-addon2">
         <div class="input-group-append">
-          <button class="btn btn-outline-secondary" type="button">Фильтры</button>
-          <button class="btn btn-outline-secondary" type="button">Поиск</button>
+          <button class="btn btn-outline-secondary" type="button" data-toggle="collapse" data-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">Фильтры</button>
+          <button class="btn btn-outline-secondary" type="button" onclick="search()">Поиск</button>
         </div>
-      </div>
+    </div>
+    <div class="collapse" id="collapseFilter">
+		<div class="input-group mb-3">
+		  	<div class="input-group-prepend">
+		    	<label class="input-group-text" for="inputGroupSelect">Город</label>
+		  	</div>
+		  	<select class="custom-select" id="inputGroupSelect">
+		    	<option selected>Сочи</option>
+		    	<option value="1">Казань</option>
+		    	<option value="2">Санкт-Петербург</option>
+		    	<option value="3">Москва</option>
+		 	</select>
+		</div>
 
-      <div class="row">
-        <div class="col-md-6 col-xl-3">
-          <div class="card mx-auto mb-4">
-          	<div class="card-header bg-info">
-        		Название категории
-    		</div>
-            <div class="card-body">
-              <h5 class="card-title">Название события</h5>
-              <p class="card-text">Описание события</p>
-              <p class="card-text">Дата начала:1.01.1970 Дата окончания: 02.02.1972</p>
-              <a href="#" class="btn btn-primary">Редактировать</a>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6 col-xl-3">
-          <div class="card mx-auto mb-4">
-          	<div class="card-header bg-info">
-        		Название категории
-    		</div>
-            <div class="card-body">
-              <h5 class="card-title">Название события</h5>
-              <p class="card-text">Описание события</p>
-              <p class="card-text">Дата начала:1.01.1970 Дата окончания: 02.02.1972</p>
-              <a href="#" class="btn btn-primary">Редактировать</a>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6 col-xl-3">
-          <div class="card mx-auto mb-4">
-          	<div class="card-header bg-info">
-        		Название категории
-    		</div>
-            <div class="card-body">
-              <h5 class="card-title">Название события</h5>
-              <p class="card-text">Описание события</p>
-              <p class="card-text">Дата начала:1.01.1970 Дата окончания: 02.02.1972</p>
-              <a href="#" class="btn btn-primary">Редактировать</a>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6 col-xl-3">
-          <div class="card mx-auto mb-4">
-          	<div class="card-header bg-info">
-        		Название категории
-    		</div>
-            <div class="card-body">
-              <h5 class="card-title">Название события</h5>
-              <p class="card-text">Описание события</p>
-              <p class="card-text">Дата начала:1.01.1970 Дата окончания: 02.02.1972</p>
-              <a href="#" class="btn btn-primary">Редактировать</a>
-            </div>
-          </div>
-        </div>
-      </div>
+		<div class="input-group mb-3">
+			 <div class="input-group-prepend">
+			    <span class="input-group-text" id="">Начало</span>
+			 </div>
+			 <input type="date" class="form-control">
+			 <div class="input-group-prepend">
+			 	<span class="input-group-text" id="">Конец</span>
+			 </div>
+			 <input type="date" class="form-control">
+		</div>
 
+		
+
+		<div class="input-group">
+
+		</div>
+	</div>
+
+     <div class="row" id="cards">
+     </div>
+
+<script type="text/javascript">
+	let filter={
+		"category":{
+			"water": {
+				"title": "Отключение воды",
+				"description": "Тип water Event'a - событие, описывающее отключение воды в районе, улице или доме",
+				"used":false,
+			},
+			"energy":{
+				"title": "Отключение электричества",
+				"description": "Тип energy Event'a - событие, описывающее отключение электричества в районе, улице или доме",
+				"used": false,
+			},
+			"theater":{
+				"title": "Театральная постановка",
+				"description": "Тип theater Event'a - событие, описывающе театральную постановку, которая пройдет в городе",
+				"used": true,
+			},
+			"concert":{
+				"title":"Концерт",
+				"description": "",
+				"used": true,
+			},
+			"sport":{
+				"title":"Спорт",
+				"description": "",
+				"used": true,
+			},
+			"art":{
+				"title":"Художественное мероприятие",
+				"used":true,
+			},
+			"festival":{
+				"tittle":"Фестиваль",
+				"description": "",
+				"used":true,
+			},
+			"fair":{
+				"title":"Ярмарка",
+				"description": "",
+				"used":true,
+			},
+			"lectures":{
+				"title": "Лекции и семинары",
+				"description": "",
+				"used": true,
+			},
+			"fashion":{
+				"title": "Мода",
+				"description": "",
+				"used":true,
+			},
+			"exhibition":{
+				"title": "Выставки",
+				"description": "",
+				"used":true,
+			},
+			"incident":{
+				"title": "Чрезвычайное происшествие",
+				"description": "",
+				"used": true,
+			},
+			"hakaton":{
+				"title":"Хакатон",
+				"description": "",
+				"used": true,
+			},
+		},
+
+		"city": "Сочи",
+		"time": {
+			"begin": 123456789,
+			"end": 987654321,
+		}
+	}
 	
+	let endpoint = "http://85.143.221.107:1337/api/event?";
+
+	//init search
+	search();
+
+	function search(){
+		$(".card-col").remove();
+
+		for (key in filter.category){
+			if (filter.category[key].used){
+				let request = endpoint + "type=" + key;
+				$.get(request, function(response){
+						for (key in response) {
+							
+							let event = response[key];
+							
+							let event_title = event.title;
+							let event_description = event.description;
+							let event_category = filter.category[event.type].title;
+							let event_start = new Date(event.begin * 1000).toLocaleString();
+							let event_end = new Date(event.end * 1000).toLocaleString();
+
+
+
+							$("#cards").append('<div class="col-md-6 col-xl-3 card-col">\
+	          									<div class="card mx-auto mb-4">\
+	          										<div class="card-header bg-info">' 
+	        											+ event_category + 
+	    											'</div>\
+	            								<div class="card-body">\
+	              									<h5 class="card-title">' + event_title + '</h5>\
+	              									<p class="card-text">' + event_description + '</p>\
+	              									<p class="card-text">Дата начала:' + event_start + 'Дата окончания:' + event_end + '</p>\
+	              									<a href="#" class="btn btn-primary">Редактировать</a>\
+	            								</div>\
+	          									</div>\
+	        								</div>');
+							
+						}
+					}
+				)
+			}
+		}
+
+	}
+
+</script>	
 
 {% endblock content %}
