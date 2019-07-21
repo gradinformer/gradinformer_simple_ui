@@ -6,14 +6,14 @@
   <div class="form-group row">
     <label for="titleAdd" class="col-sm-2 col-form-label">Название</label>
     <div class="col-sm-10">
-      <input type="text" class="form-control" id="titleAdd" placeholder="Название события">
+      <input type="text" class="form-control" id="titleAdd" placeholder="Название события" required="required">
     </div>
   </div>
 
   <div class="form-group row">
     <label for="categoryAdd" class="col-sm-2 col-form-label">Категория</label>
     <div class="col-sm-10">
-      <input type="text" class="form-control" id="categoryAdd" placeholder="Выберите категорию события">
+      <input type="text" class="form-control" id="categoryAdd" placeholder="Выберите категорию события" required="required">
     </div>
   </div>
 
@@ -21,11 +21,11 @@
     <label for="dateAdd" class="col-sm-2 col-form-label">Дата и время</label>
       <div class="col-sm-5">
         <label for='beginDate' class="col-form-label">Начало:</label>
-        <input type="datetime-local" id="beginDate">
+        <input type="datetime-local" id="beginDate" required="required">
       </div>
       <div class="col-sm-5">
         <label for='endDate' class="col-form-label">Конец:</label>
-        <input type="datetime-local" id="endDate">
+        <input type="datetime-local" id="endDate" required="required">
       </div>
   </div>
 
@@ -42,21 +42,21 @@
   <div class="form-group row">
     <label for="addresAdd" class="col-sm-2 col-form-label">Адресс</label>
     <div class="col-sm-10">
-      <input type="text" class="form-control" id="addressAdd" placeholder="Введите адрес или отметьте расположение на карте">
+      <input type="text" class="form-control" id="addressAdd" placeholder="Введите адрес или отметьте расположение на карте" required="required">
     </div>
   </div>
 
   <div class="form-group row">
     <label for="descriptionAdd" class="col-sm-2 col-form-label">Описание</label>
     <div class="col-sm-10">
-      <textarea class="form-control" id="descriptionAdd" rows="5"></textarea>
+      <textarea class="form-control" id="descriptionAdd" rows="5" required="required"></textarea>
     </div>
   </div>
 
   <div class="form-group row">
     <label for="contactAdd" class="col-sm-2 col-form-label">Контактная информация</label>
     <div class="col-sm-10">
-      <textarea class="form-control" id="contactInfo" rows=""></textarea>
+      <textarea class="form-control" id="contactInfo" rows="" required="required"></textarea>
     </div>
   </div>
 
@@ -94,6 +94,7 @@
       id: 'mapbox.streets',
       accessToken: 'your.mapbox.access.token'
   }).addTo(mymap);
+  mymap.setView([43.585278, 39.720278], 15);  
 
   let eventMarker;
 
