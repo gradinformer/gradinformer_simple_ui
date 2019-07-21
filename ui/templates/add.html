@@ -184,13 +184,13 @@
     
     $.post({
       url: "http://85.143.221.107:1337/api/set_event",
-      contentType:"text/html; charset=utf-8", 
+      contentType: "application/json; charset=utf-8",
       data: JSON.stringify(post_object).toString(),
-      success: function (result) {
-        console.log(result)
-      }
-    });
-    alert("a");
+      success: function(data){
+        alert("Событие добавлено.")
+      },
+      fail: function(xhr, status,error) { alert("Ошибка выполнения")},
+    })
   }
 
   function setMapHeight(mapid){
