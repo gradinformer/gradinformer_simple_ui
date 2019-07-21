@@ -3,7 +3,7 @@
 
 {% block content %}
 	<div class="input-group mb-3 searchstring" style="padding-top: 15px;">
-        <input type="text" class="form-control" placeholder="Поиск по описанию" aria-label="Имя получателя" aria-describedby="basic-addon2">
+        <input type="text" id="searchstring" class="form-control" placeholder="Поиск по описанию" aria-label="Имя получателя" aria-describedby="basic-addon2">
         <div class="input-group-append">
           <button class="btn btn-outline-secondary" type="button" data-toggle="collapse" data-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">Фильтры</button>
           <button class="btn btn-outline-secondary" type="button" onclick="search()">Поиск</button>
@@ -12,31 +12,28 @@
     <div class="collapse" id="collapseFilter">
 		<div class="input-group mb-3">
 		  	<div class="input-group-prepend">
-		    	<label class="input-group-text" for="inputGroupSelect">Город</label>
+		    	<label class="input-group-text" for="cityFilter">Город</label>
 		  	</div>
-		  	<select class="custom-select" id="inputGroupSelect">
-		    	<option selected>Сочи</option>
-		    	<option value="1">Казань</option>
-		    	<option value="2">Санкт-Петербург</option>
-		    	<option value="3">Москва</option>
+		  	<select class="custom-select" id="cityFilter">
+		    	<option value="Сочи" selected>Сочи</option>
+		    	<option value="Казань">Казань</option>
+		    	<option value="Санкт-Петербург">Санкт-Петербург</option>
+		    	<option value="Москва">Москва</option>
 		 	</select>
 		</div>
 
 		<div class="input-group mb-3">
 			 <div class="input-group-prepend">
-			    <span class="input-group-text" id="">Начало</span>
+			    <span class="input-group-text">Начало</span>
 			 </div>
-			 <input type="date" class="form-control">
+			 <input type="date" id="filterStartTime" class="form-control">
 			 <div class="input-group-prepend">
-			 	<span class="input-group-text" id="">Конец</span>
+			 	<span class="input-group-text">Конец</span>
 			 </div>
-			 <input type="date" class="form-control">
+			 <input type="date" id="filterEndTime" class="form-control">
 		</div>
 
-		
-
-		<div class="input-group">
-
+		<div class="row" id="category_filter_row">
 		</div>
 	</div>
 
@@ -114,22 +111,87 @@
 
 		"city": "Сочи",
 		"time": {
-			"begin": 123456789,
-			"end": 987654321,
+			"begin": "",
+			"end": "",
 		}
 	}
 	
 	let endpoint = "http://85.143.221.107:1337/api/event?";
 
 	//init search
+	setFilterToCoocie(filter);
+	getFiltersFromCoocies();
+	setCategoryFilter();
 	search();
+
+
+	function setFilterToCoocie(filter){
+		setCookie("filter", JSON.stringify(filter));
+	}
+
+	function getFiltersFromCoocies(){
+		console.log(getCookie("filter"));
+	}
+
+	//изменение города фильтрации
+	$("#cityFilter").change(function(e){
+			filter.city = $("#cityFilter option:selected").text();
+			setFilterToCoocie(filter);
+			search();
+		}
+	);
+
+	$("#filterStartTime").change(function(e){
+		let begin_unix_time =  new Date($("#filterStartTime").val()).getTime();
+		filter.time.begin = begin_unix_time;
+		setFilterToCoocie(filter);
+		search();
+	})
+
+	$("#filterEndTime").change(function(e){
+
+		let end_unix_time =  new Date($("#filterStartTime").val()).getTime();
+		filter.time.end = end_unix_time;
+		setFilterToCoocie(filter);
+		search();
+	})
+
+	$(".category_filter").change(function(e){
+
+		let category = e.target.getAttribute('category');
+		filter.category[category].used = e.target.checked;
+ 		setFilterToCoocie(filter);
+ 		search();
+	})
+
+
 
 	function search(){
 		$(".card-col").remove();
 
+		let search_text = $("#searchstring").val();
+
 		for (key in filter.category){
+
 			if (filter.category[key].used){
-				let request = endpoint + "type=" + key;
+
+				let request = endpoint;
+
+				if (filter.city){
+					request += "city=" + filter.city + "&";
+				}
+
+				if (filter.time.begin && filter.time.end){
+					request += "begin=" + filter.time.begin + "&";
+					request += "end=" + filer.time.end + "&";
+				}
+
+				if(search_text) {
+					request += "description=" + search_text + "&";
+				}
+
+
+				request += "type=" + key + "&";
 				$.get(request, function(response){
 						for (key in response) {
 							
@@ -163,6 +225,22 @@
 			}
 		}
 
+	}
+
+	function setCategoryFilter(){
+		for (key in filter.category){
+			$("#category_filter_row").append('<div class="col-md-6 col-xl-3">\
+												<div class="input-group mb-3">\
+				  									<div class="input-group-prepend">\
+				    									<div class="input-group-text">\
+				      										<input class="category_filter"' + 'category=' + key + ' type="checkbox"'  + (filter.category[key].used ? 'checked': '') + '>\
+				    									</div>\
+				  									</div>\
+				  								<input type="text" class="form-control" placeholder="' + filter.category[key].title + '" aria-label="Text input with checkbox" readonly>\
+												</div>\
+											</div>');
+
+		}
 	}
 
 </script>	
