@@ -78,12 +78,14 @@
     "street": "",
     "house": "",
     "full_address": "",
-    "point": {
-      "type": "Point",
-      "coordinates": [0, 0]
-    },
+    "lon": 0,
+    "lat": 0,
     "text": ""
-  }  
+  }
+
+  function get_api_key(){
+    return "u4ahqccok9gueojxwxrnvmpgysqzkahz"
+  }
 
   let mymap = L.map('mapAdd').setView([51.505, -0.09], 13);
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoia29udWNob3ZhcnRlbSIsImEiOiJjajhoOGJmZmQwMDltMndrbnhnY3J5andvIn0.9iiSiT1X3i5zSU4YTr9c9w', {
@@ -119,7 +121,7 @@
         document.getElementById("addressAdd").value = full_address;
 
         post_object['full_address'] = full_address;
-        components = geo_object.Address.Components
+        components = geo_object.Address.Components;
         for(let item in components){
           if(components[item].kind == "locality"){
             post_object.city = components[item].name;
@@ -131,10 +133,11 @@
             post_object.house = components[item].name;
           }
         }
+        post_object.lon = response.response.GeoObjectCollection.featureMember[0].GeoObject.Point.pos.split(' ')[0];
+        post_object.lat = response.response.GeoObjectCollection.featureMember[0].GeoObject.Point.pos.split(' ')[1];
       }
     );
   });
-
 
   document.getElementById("addressAdd").onfocusout = function() {
     text = $("#addressAdd")[0].value;
@@ -148,7 +151,9 @@
           
           update_marker(point[1], point[0]);
           mymap.setView([point[1], point[0]], 15);
-
+          
+          post_object.lon = point[0];
+          post_object.lat = point[1];
           post_object['full_address'] = geo_object.text;
           components = geo_object.Address.Components
           for(let item in components){
@@ -171,10 +176,21 @@
     post_object.description = $("#titleAdd")[0].value;
     post_object.type = $("#categoryAdd")[0].value;
     post_object.begin = Math.floor(new Date($("#beginDate")[0].value).getTime()/1000.0);
-    post_object.end = Math.floor(new Date($("#endDate"[0]).value).getTime()/1000.0);
-    post_object.text = $("#contactInfo")[0].value;
-    console.log(post_object);
-    alert(post_object);
+    post_object.end =   Math.floor(new Date(  $("#endDate")[0].value).getTime()/1000.0);
+    post_object.text = $("#descriptionAdd")[0].value;
+    post_object.contact_information = $("#contactInfo")[0].value;
+
+    post_object.token = get_api_key();
+    
+    $.post({
+      url: "http://85.143.221.107:1337/api/set_event",
+      contentType:"text/html; charset=utf-8", 
+      data: JSON.stringify(post_object).toString(),
+      success: function (result) {
+        console.log(result)
+      }
+    });
+    alert("a");
   }
 
   function setMapHeight(mapid){
