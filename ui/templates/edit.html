@@ -6,29 +6,28 @@
   <div class="form-group row">
     <label for="titleAdd" class="col-sm-2 col-form-label">Название</label>
     <div class="col-sm-10">
-      <input type="text" class="form-control" id="titleAdd" placeholder="Название события" required="required">
+      <input type="text" class="form-control inputForm" id="titleAdd" placeholder="Название события" required="required">
     </div>
   </div>
 
   <div class="form-group row">
     <label for="categoryAdd" class="col-sm-2 col-form-label">Категория</label>
     <div class="col-sm-10">
-      <select class="custom-select" id="categoryAdd">
+      <select class="custom-select inputForm" id="categoryAdd">
 
       </select>
-      <!--<input type="text" class="form-control" id="categoryAdd" placeholder="Выберите категорию события" required="required"> -->
     </div>
   </div>
-        
+
   <div class="form-group row">
     <label for="dateAdd" class="col-sm-2 col-form-label">Дата и время</label>
       <div class="col-sm-5">
         <label for='beginDate' class="col-form-label">Начало:</label>
-        <input type="datetime-local" id="beginDate" required="required">
+        <input type="datetime-local" id="beginDate" required="required" class="inputForm">
       </div>
       <div class="col-sm-5">
         <label for='endDate' class="col-form-label">Конец:</label>
-        <input type="datetime-local" id="endDate" required="required">
+        <input type="datetime-local" id="endDate" required="required" class="inputForm">
       </div>
   </div>
 
@@ -45,21 +44,21 @@
   <div class="form-group row">
     <label for="addresAdd" class="col-sm-2 col-form-label">Адресс</label>
     <div class="col-sm-10">
-      <input type="text" class="form-control" id="addressAdd" placeholder="Введите адрес или отметьте расположение на карте" required="required">
+      <input type="text" class="form-control inputForm" id="addressAdd" placeholder="Введите адрес или отметьте расположение на карте" required="required">
     </div>
   </div>
 
   <div class="form-group row">
     <label for="descriptionAdd" class="col-sm-2 col-form-label">Описание</label>
     <div class="col-sm-10">
-      <textarea class="form-control" id="descriptionAdd" rows="5" required="required"></textarea>
+      <textarea class="form-control inputForm" id="descriptionAdd" rows="5" required="required"></textarea>
     </div>
   </div>
 
   <div class="form-group row">
     <label for="contactAdd" class="col-sm-2 col-form-label">Контактная информация</label>
     <div class="col-sm-10">
-      <textarea class="form-control" id="contactInfo" rows="" required="required"></textarea>
+      <textarea class="form-control inputForm" id="contactInfo" rows="" required="required"></textarea>
     </div>
   </div>
 
@@ -87,6 +86,35 @@
   }
 
   setCategorySelector();
+  //var eventMarker;
+
+   $.get({
+    url: "http://85.143.221.107:1337/api/event?id={{event_id}}",
+    success: function(result){
+      console.log(result);
+      $("#titleAdd").val(result.title);
+      setCategory(result.type);
+      $("#beginDate").val(getFormatDateStringFromUnixTime(result.begin));
+      $("#endDate").val(getFormatDateStringFromUnixTime(result.end));
+      $("#addressAdd").val(result.full_address);
+      $("#descriptionAdd").val(result.description);
+      $("#contactInfo").val(result.contact_information);
+      eventMarker = L.marker({"lat": result.house_geopos.coordinates[1], "lng": result.house_geopos.coordinates[0]}).addTo(mymap);
+    }
+   })
+
+  function getFormatDateStringFromUnixTime(unix_time){
+    let datestring = new Date(unix_time * 1000).toISOString();
+    return  datestring.substring(0, datestring.length - 5);
+  }
+
+  if (!getCookie("api_key")){
+    $(".inputForm").attr('readonly', true);
+    $("#categoryAdd").attr("disabled", true);
+
+    $("#send").attr('hidden', true);
+
+  }
 
   function get_api_key(){
     cookies = document.cookie.split("; ");
@@ -99,15 +127,14 @@
     return(api_key);
   }
 
-  let mymap = L.map('mapAdd').setView([51.505, -0.09], 13);
+  let mymap = L.map('mapAdd').setView([43.585278, 39.720278], 15);
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoia29udWNob3ZhcnRlbSIsImEiOiJjajhoOGJmZmQwMDltMndrbnhnY3J5andvIn0.9iiSiT1X3i5zSU4YTr9c9w', {
       attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
       maxZoom: 18,
       id: 'mapbox.streets',
       accessToken: 'your.mapbox.access.token'
   }).addTo(mymap);
-  mymap.setView([43.585278, 39.720278], 15);  
-
+  
   let eventMarker;
 
   setMapHeight("mapAdd");
@@ -125,32 +152,34 @@
   }
 
   mymap.on('click', function (e){
-    update_marker(e.latlng.lat, e.latlng.lng);
-    $.get(
-      "https://geocode-maps.yandex.ru/1.x/?format=json&apikey="+"{{yandex_geocoder_key}}"+"&geocode="+e.latlng.lng+","+e.latlng.lat,
-      function (response){
-        geo_object = response.response.GeoObjectCollection.featureMember[0].GeoObject.metaDataProperty.GeocoderMetaData;
-        full_address = geo_object.text;
-        document.getElementById("addressAdd").value = full_address;
+    if (getCookie("api_key")) {
+      update_marker(e.latlng.lat, e.latlng.lng);
+      $.get(
+        "https://geocode-maps.yandex.ru/1.x/?format=json&apikey="+"{{yandex_geocoder_key}}"+"&geocode="+e.latlng.lng+","+e.latlng.lat,
+        function (response){
+          geo_object = response.response.GeoObjectCollection.featureMember[0].GeoObject.metaDataProperty.GeocoderMetaData;
+          full_address = geo_object.text;
+          document.getElementById("addressAdd").value = full_address;
 
-        post_object['full_address'] = full_address;
-        components = geo_object.Address.Components;
-        for(let item in components){
-          if(components[item].kind == "locality"){
-            post_object.city = components[item].name;
+          post_object['full_address'] = full_address;
+          components = geo_object.Address.Components;
+          for(let item in components){
+            if(components[item].kind == "locality"){
+              post_object.city = components[item].name;
+            }
+            else if(components[item].kind == "street"){
+              post_object.street = components[item].name;
+            }
+            else if(components[item].kind == "house"){
+              post_object.house = components[item].name;
+            }
           }
-          else if(components[item].kind == "street"){
-            post_object.street = components[item].name;
-          }
-          else if(components[item].kind == "house"){
-            post_object.house = components[item].name;
-          }
+          post_object.lon = response.response.GeoObjectCollection.featureMember[0].GeoObject.Point.pos.split(' ')[0];
+          post_object.lat = response.response.GeoObjectCollection.featureMember[0].GeoObject.Point.pos.split(' ')[1];
         }
-        post_object.lon = response.response.GeoObjectCollection.featureMember[0].GeoObject.Point.pos.split(' ')[0];
-        post_object.lat = response.response.GeoObjectCollection.featureMember[0].GeoObject.Point.pos.split(' ')[1];
-      }
-    );
-  });
+      );
+    }
+});
 
   document.getElementById("addressAdd").onfocusout = function() {
     text = $("#addressAdd")[0].value;
@@ -229,14 +258,19 @@
         console.log(response);
           for (key in response){
             console.log(response[key].title);
-            $("#categoryAdd").append('<option value=' + response[key].type + '>' + response[key].title + '</option>');
+            $("#categoryAdd").append('<option class="category_option" value=' + response[key].type + '>' + response[key].title + '</option>');
           }
-
-      }
-      
+      }    
     })
 
   }
+
+  function setCategory(type){
+    console.log('.category_option[value="' + type +'"]');
+    $('.category_option[value="' + type +'"]').attr("selected", true)
+  }
+
+
 
 </script>
 {% endblock content %}

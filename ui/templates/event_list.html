@@ -19,7 +19,7 @@
 		    	<option value="Казань">Казань</option>
 		    	<option value="Санкт-Петербург">Санкт-Петербург</option>
 		    	<option value="Москва">Москва</option>
-		    	<option value="Лондон">Лондон</option>
+		    	<option value="Лондон">Томск</option>
 		 	</select>
 		</div>
 
@@ -166,7 +166,6 @@
 	})
 
 
-
 	function search(){
 
 		$(".card-col").remove();
@@ -205,6 +204,8 @@
 							let event_start = new Date(event.begin * 1000).toLocaleString();
 							let event_end = new Date(event.end * 1000).toLocaleString();
 
+							let event_id = event._id;
+
 
 
 							$("#cards").append('<div class="col-md-6 col-xl-3 card-col">\
@@ -216,10 +217,18 @@
 	              									<h5 class="card-title">' + event_title + '</h5>\
 	              									<p class="card-text">' + event_description + '</p>\
 	              									<p class="card-text">Дата начала:' + event_start + 'Дата окончания:' + event_end + '</p>\
-	              									<a href="#" class="btn btn-primary">Редактировать</a>\
+	              									<a href="' + event_id  +'" class="btn btn-primary in_card_button">Редактировать</a>\
 	            								</div>\
 	          									</div>\
 	        								</div>');
+
+							var api_key = getCookie("api_key")
+							console.log(api_key)
+							if (api_key){
+								$(".in_card_button").text("Редактировать");
+							}else{
+								$(".in_card_button").text("Просмотр");
+							};
 							
 						}
 					}

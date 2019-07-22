@@ -52,8 +52,8 @@
 
 	</div>
   <script type="text/javascript">
-    var api_key = getCookie("api_key");
-    if (api_key){
+    
+    if (getCookie("api_key")){
      $("#navbar_reg a").remove();
      $("#navbar_reg").append('<a class="nav-item nav-link" onclick=log_out()>Выйти</a>');
     } 
