@@ -84,7 +84,14 @@
   }
 
   function get_api_key(){
-    return "u4ahqccok9gueojxwxrnvmpgysqzkahz"
+    cookies = document.cookie.split("; ");
+    let api_key = "";
+    for(var item in cookies){
+      if(cookies[item].search("api_key=") != -1){
+        api_key = cookies[item].replace("api_key=", "");
+      }
+    }
+    return(api_key);
   }
 
   let mymap = L.map('mapAdd').setView([51.505, -0.09], 13);
@@ -182,16 +189,22 @@
     post_object.contact_information = $("#contactInfo")[0].value;
 
     post_object.token = get_api_key();
-    
-    $.post({
-      url: "http://85.143.221.107:1337/api/set_event",
-      contentType: "application/json; charset=utf-8",
-      data: JSON.stringify(post_object).toString(),
-      success: function(data){
-        alert("Событие добавлено.")
-      },
-      fail: function(xhr, status,error) { alert("Ошибка выполнения")},
-    })
+    if(post_object.token != ''){
+      $.post({
+        url: "http://85.143.221.107:1337/api/set_event",
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify(post_object).toString(),
+        success: function(data){
+          alert("Событие добавлено.")
+        },
+        fail: function(xhr, status,error) { 
+          alert("Ошибка выполнения")
+        },
+      })
+    }
+    else{
+      alert("Для создания события необходимо авторизироваться")
+    }
   }
 
   function setMapHeight(mapid){
