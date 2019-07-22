@@ -11,6 +11,5 @@ urlpatterns = [
     path('auth', views.auth, name='auth'),
 
     path('<event_id>', views.event, name='event'),
-    path('<event_id>/change', views.event_change, name='event_change'),
    	path('<event_id>/history',views.event_history,name='event_history'),
 ] + static(settings.STATIC_URL);

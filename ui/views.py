@@ -23,7 +23,8 @@ def auth(request):
 	return render(request, 'auth.html')
 
 def event(request, event_id):
-	return HttpResponse("Event")
+	context = { "event_id": event_id};
+	return render(request, 'edit.html', context)
 
 def event_change(request, event_id):
 	return HttpResponse("Change event")
